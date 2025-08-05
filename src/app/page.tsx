@@ -1,103 +1,174 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FormStorage } from '@/lib/storage';
+import { Form } from '@/types/models';
+import { generateFormId } from '@/utils/id';
+import { Plus, Edit, Eye, Trash2, FileText } from 'lucide-react';
+
+export default function HomePage() {
+  const [forms, setForms] = useState<Form[]>([]);
+  const [newFormTitle, setNewFormTitle] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    loadForms();
+  }, []);
+
+  const loadForms = () => {
+    const allForms = FormStorage.getAllForms();
+    setForms(allForms);
+  };
+
+  const createNewForm = () => {
+    if (!newFormTitle.trim()) return;
+
+    const newForm: Form = {
+      id: generateFormId(),
+      title: newFormTitle.trim(),
+      description: '',
+      questions: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    FormStorage.saveForm(newForm);
+    setNewFormTitle('');
+    setIsCreating(false);
+    loadForms();
+  };
+
+  const deleteForm = (id: string) => {
+    if (confirm('Tem certeza que deseja excluir este formulário?')) {
+      FormStorage.deleteForm(id);
+      loadForms();
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">Meus Formulários</h2>
+          <p className="text-gray-600 mt-2">
+            Crie e gerencie seus formulários dinâmicos
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Button
+          onClick={() => setIsCreating(true)}
+          className="flex items-center gap-2"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <Plus className="h-4 w-4" />
+          Novo Formulário
+        </Button>
+      </div>
+
+      {/* Criar novo formulário */}
+      {isCreating && (
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h3 className="text-lg font-semibold mb-4">Criar Novo Formulário</h3>
+          <div className="flex gap-4">
+            <Input
+              placeholder="Título do formulário"
+              value={newFormTitle}
+              onChange={(e) => setNewFormTitle(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && createNewForm()}
+              className="flex-1"
+            />
+            <Button onClick={createNewForm} disabled={!newFormTitle.trim()}>
+              Criar
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCreating(false);
+                setNewFormTitle('');
+              }}
+            >
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Lista de formulários */}
+      {forms.length === 0 ? (
+        <div className="bg-white p-12 rounded-lg shadow-sm border text-center">
+          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Nenhum formulário criado
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Comece criando seu primeiro formulário dinâmico
+          </p>
+          <Button onClick={() => setIsCreating(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Criar Primeiro Formulário
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {forms.map((form) => (
+            <div
+              key={form.id}
+              className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    {form.title}
+                  </h3>
+                  {form.description && (
+                    <p className="text-sm text-gray-600 mb-2">
+                      {form.description}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500">
+                    {form.questions.length} pergunta{form.questions.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => deleteForm(form.id)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="flex gap-2">
+                <Link href={`/form/${form.id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar
+                  </Button>
+                </Link>
+                <Link href={`/form/${form.id}/view`} className="flex-1">
+                  <Button size="sm" className="w-full">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Visualizar
+                  </Button>
+                </Link>
+              </div>
+              <div className="mt-2">
+                <Link href={`/form/${form.id}/responses`} className="w-full">
+                  <Button variant="ghost" size="sm" className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                    Ver Respostas
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="mt-3 text-xs text-gray-500">
+                Criado em {form.createdAt.toLocaleDateString('pt-BR')}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
