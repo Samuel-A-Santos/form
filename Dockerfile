@@ -6,9 +6,9 @@ COPY package.json package-lock.json ./
 
 RUN npm install
 
-COPY . .
+COPY . .  
 
-RUN npm run build
+RUN npm run build 
 
 EXPOSE 3000
 
