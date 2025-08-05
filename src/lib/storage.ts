@@ -80,6 +80,7 @@ export function convertQuestionTypeToTipoPergunta(type: QuestionType): TipoPergu
     [QuestionType.FREE_TEXT]: TipoPergunta.TEXTO_LIVRE,
     [QuestionType.INTEGER]: TipoPergunta.INTEIRO,
     [QuestionType.DECIMAL]: TipoPergunta.NUMERO_DECIMAL,
+    [QuestionType.LONG_TEXT]: TipoPergunta.TEXTO_LIVRE,
   };
   return mapping[type];
 }
