@@ -150,7 +150,7 @@ export default function HomePage() {
                 <Link href={`/form/${form.id}/view`} className="flex-1">
                   <Button size="sm" className="w-full">
                     <Eye className="h-4 w-4 mr-2" />
-                    Visualizar
+                    Visualizar e responder
                   </Button>
                 </Link>
               </div>
