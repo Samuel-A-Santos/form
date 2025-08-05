@@ -147,7 +147,7 @@ export function QuestionEditor({
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white z-50 shadow-lg">
                 {Object.entries(QUESTION_TYPE_LABELS).map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}
@@ -245,7 +245,7 @@ export function QuestionEditor({
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a pergunta dependente" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white z-50 shadow-lg">
                       <SelectItem value="none">Nenhuma (sempre visível)</SelectItem>
                       {getAvailableQuestions().map((q) => (
                         <SelectItem key={q.id} value={q.id}>
@@ -264,7 +264,7 @@ export function QuestionEditor({
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione a condição" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white z-50 shadow-lg">
                           {Object.entries(CONDITION_TYPE_LABELS).map(([value, label]) => (
                             <SelectItem key={value} value={value}>
                               {label}

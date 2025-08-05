@@ -101,7 +101,6 @@ export default function FormViewPage({ params }: FormViewPageProps) {
     }
 
     const commonProps = {
-      key: question.id,
       className: "w-full",
       required: question.required,
     };
@@ -110,6 +109,7 @@ export default function FormViewPage({ params }: FormViewPageProps) {
       case 'free_text':
         return (
           <Input
+            key={question.id}
             {...commonProps}
             type="text"
             value={answers[question.id] as string || ''}
@@ -118,9 +118,10 @@ export default function FormViewPage({ params }: FormViewPageProps) {
           />
         );
 
-      case 'free_text':
+      case 'long_text':
         return (
           <Textarea
+            key={question.id}
             {...commonProps}
             value={answers[question.id] as string || ''}
             onChange={(e) => updateAnswer(question.id, e.target.value)}
@@ -133,6 +134,7 @@ export default function FormViewPage({ params }: FormViewPageProps) {
       case 'decimal':
         return (
           <Input
+            key={question.id}
             {...commonProps}
             type="number"
             value={answers[question.id] as string || ''}
@@ -150,7 +152,7 @@ export default function FormViewPage({ params }: FormViewPageProps) {
             <SelectTrigger>
               <SelectValue placeholder="Selecione uma opção" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white z-50 shadow-lg">
               {question.options?.map((option) => (
                 <SelectItem key={option.id} value={option.value}>
                   {option.text}
@@ -204,11 +206,10 @@ export default function FormViewPage({ params }: FormViewPageProps) {
           </div>
         );
 
-
-
       default:
         return (
           <Input
+            key={question.id}
             {...commonProps}
             type="text"
             value={answers[question.id] as string || ''}
